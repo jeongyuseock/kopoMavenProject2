@@ -68,12 +68,15 @@ object Example_Join {
   selloutData.show()
 
 
-
+//  left join                 right join도 그냥 레프트조인에 넣으면됨
   spark.sql("select a.product, b.regionname " +
     "from selloutTable a " +
     "left join selloutTable2 b " +
     "on a.regionid = b.regionid")
 
+
+
+  // inner join
   spark.sql("select a.regionid, b.regionname " +
     "from selloutTable a " +
     "inner join selloutTable2 b " +

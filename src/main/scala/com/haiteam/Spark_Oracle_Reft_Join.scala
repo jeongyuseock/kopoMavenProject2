@@ -2,7 +2,7 @@ package com.haiteam
 import org.apache.spark.sql.SparkSession
 
 object Spark_Oracle_Reft_Join {
-  object Example_Join {
+
     def main(args: Array[String]): Unit = {
 
       // 스파크에서 오라클 불러와서 레프트 조인하는법
@@ -75,27 +75,52 @@ object Spark_Oracle_Reft_Join {
       })
 
 
-                //실습  연주차 정보가 52보다 큰값을 제거하는 로직구현
+                //실습:자신이 생성한 RDD에  연주차 정보가 52보다 큰값을 제거하는 로직구현
                 //A60 PRODUCT34 201402 4463
                 var rawExrdd2 = rawRdd.filter(x=>{
+                  // boolean = true
                   var checkValid = true
-                  if ((x.getString(yearweekNo) ==  ))
-                     {
+                  // 찾기 : yearweek 인덱스로 주자정보만 인트타입으로 변환
+                  var weekValue = x.getString(yearweekNo).substring(4).toInt
+                  // 비교한후 주차정보가 53 이상인 경우 레코드 삭제
+                  if ( weekValue >= 53 ){
                     checkValid = false
-                  }
-                  checkValid
-
-
-                })
-
     }
+    checkValid
+  })
+
+
+
+            //실습 : 상품정보가 PRODUCT1,2, 인 정보만 필터링 하세요
+
+            // 분석대상 제품군 등록
+            var productArray = Array("PRODUCT1","PRODUCT2")
+
+            // 세트 타입으로 변환
+            var productSet = productArray.toSet
+
+            var resultRdd = rawRdd.filter( x=>{
+              var checkValid = false
+
+              // 데이터 특징 행의 product 컬럼인덱스를 활용하여 데이터 대입
+              var productInfo = x.getString(productNo);
+
+                if(productSet.contains(productInfo)){
+                  checkValid = true
+                }
+                checkValid               //이걸 주석하고 밑에걸 넣어도도
+            })
+            // 2번째 방법
+            // if((productInfo == "PRODUCT1") ||        //productArray(0)
+            //    (productInfo == "PRODUCT2")) {        //productArray(1)
+            //    checkValid = true
+    }
+          //화면에 찍는법 resultRdd.take(3)foreach(println)
 
 
 
 
 
-
-  }
 
 
 }
