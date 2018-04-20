@@ -2,7 +2,7 @@ package com.haiteam
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{StringType, DoubleType, StructField, StructType} //RDD에서 DataFram으로 변환할대 임폴트해줘야함
-
+import org.apache.spark.sql.Row
 object RDD {
 
   def main(args: Array[String]): Unit = {
@@ -144,7 +144,48 @@ object RDD {
           StructField("QTY", DoubleType),               //QTY는  Double이기때문에 StringType이 아닌 DoubleType 이라고 써야함.
           StructField("PRODUCTNAME", StringType))))
 
+    var mapRdd = rawRdd.map(x=>{
+      var qty = x.getDouble(qtyNo).toDouble       // qty가 double이라서  원래 getString인데 getDouble 이라고 바꿔야함
+      var maxValue = 700000
+      if(qty > 700000){qty = 700000}
+      Row( x.getString(keyNo),
+        x.getString(yearweekNo),
+        qty)//x.getString(qtyNo)
+    })
+    // qty가 double이라서 getString아니라 getDouble
 
+    //  mapRdd.take(3)foreach(println)           Rdd는 show가    안됨 이걸로 찍어서 봐야함
+    //             전체찍는거 resultRdd.collect.toArray.foreach(println)
+
+    //mapRdd.first
+    // mapRdd.first= ( 키정보 , 지역정보 ,상품정보 ,
+
+    //처리로직 : 거래량 maxvalue 이상인것은 maxvalue로 치환한다.
+    var MAXVALUE = 70000
+    var mapRdd2 = rawRdd.map(x=>{
+      //디버킹코드: var x = mapRdd.filter(x=>{ x.getDouble(qtyNo) > 70000 }).first
+      //로직후현예정
+      var org_qty = x.getDouble(qtyNo)
+      var new_qty = org_qty
+
+      if (new_qty > MAXVALUE){
+        new_qty = MAXVALUE
+      }
+     // import org.apache.spark.sql.Row   위에서 row를 임포트해줘야 쓸수있음.스파크에서도 해야함
+     // row를 안쓰면 인덱스로 들어가서 컬럼값을 들어온 순서대로 써야함 row
+      //출력 row 키정보, 연주차정보 ,거래량 정보_org, 거래량 정보_new )
+
+      Row( x.getString(keyNo),
+        x.getString(yearweekNo),
+        org_qty,
+        new_qty)
+    })
+
+
+
+    // 디버깅   :    그냥 로직이 어떻게되어있나 보여주는정도임
+    var mapexRdd2 = rawRdd
+    var x = mapexRdd2.first
 
 
   }
